@@ -1,0 +1,29 @@
+#Como crear una entidad con Symfony.
+
+   php bin/console 		          _para ver todas las llamadas posibles.
+
+ 
+   php bin/console make:entity Category   _asi creamos la entidad Category.
+
+
+# a continuacion te pedira que introduzcas los campos, "name, description, etc..."
+
+# una vez creada la entidad, hacemos la migracion, para esto debemos configurar antes
+  en vendor>.env la conexion a la bdd, añadiendo el nombre de usuario y su contraseña,
+  una vez hecho realizamos la siguiente consulta.
+
+   php bin/console make:migration              _esto crea la migracion.
+   
+   php bin/console doctrine:migration:migrate  _con estoejecutamos la migracion y ya estaria hecha.     
+	
+----
+(nombre apellido email direccion  pais ciudad  zip_code telefono, rol_id + crear tabla role
+# Como actualizar una tabla ya creada
+   poner como si creaseis una entidad make:entity Name , y editarla
+
+# Como crear un controller con CRUD
+   php bin/console Product
+
+
+
+   
