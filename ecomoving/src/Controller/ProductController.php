@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Product;
 use App\Form\ProductType;
+use App\Input\ProductInput;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -29,7 +30,7 @@ class ProductController extends AbstractController
         $products = $productRepository->findAll();
 
         $results = $paginator->paginate($products, $request->get('page'), $request->get('limit'));
-        $items= [];
+        $items = [];
 
         /** @var Product $product */
         foreach ($results->getItems() as $product) {
@@ -49,30 +50,50 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="product_create", methods={"POST"})
-     * @throws FormValidationException
+     * @Route("/create", name="product_create",  methods={"GET","POST"})
      */
     public function create(Request $request): Response
     {
-        /** @var Product $product */
-        $product = new Product();
-        $requestData = \json_decode($request->getContent(), true);
+        try {
 
-        $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
-        /** @var Category $category */
-        $category=$categoryRepository->find($requestData['category_id']);
+            $requestData = \json_decode($request->getContent(), true);
 
-        $product->setName($requestData['name']);
-        $product->setDescription($requestData['description']);
-        $product->setStatus($requestData['status']);
-        $product->setCategory($category);
-        $product->setCreatedAt(new \DateTime());
+            $request->request->set('name', $requestData['name']);
+            $request->request->set('description', $requestData['description']);
+            $request->request->set('status', $requestData['status']);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($product);
-        $entityManager->flush();
+            $form = $this->createForm(ProductType::class, new ProductInput());
+            $form->handleRequest($request);
 
-        return new JsonResponse(['sucess' => 'ok!']);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var ProductInput $data */
+                $data = $form->getData();
+
+                /** @var Product $product */
+                $product = new Product();
+
+                $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
+                /** @var CategoryRepository $category */
+                $category=$categoryRepository->find($requestData['category_id']);
+
+                $product->setName($data->getName());
+                $product->setDescription($data->getDescription());
+                $product->setStatus($data->getStatus());
+                $product->setCategory($category);
+                $product->setCreatedAt(new \DateTime());
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($product);
+                $entityManager->flush();
+
+                return new JsonResponse(['sucess' => 'ok!']);
+
+            } else {
+                return new JsonResponse(['Error, valores no permitidos'], 400);
+            }
+        } catch (\Exception $exception) {
+            return new JsonResponse([$exception->getMessage()], 400);
+        }
 
     }
 
@@ -90,19 +111,44 @@ class ProductController extends AbstractController
      */
     public function edit(Request $request, Product $product): Response
     {
-        $data = json_decode($request->getContent(), true);
+        try{
+            $requestData = \json_decode($request->getContent(),true);
 
-        $product->setName($data['name']);
-        $product->setDescription($data['description']);
-        $product->setStatus($data['status']);
-        $product->setUpdatedAt(new \DateTime());
+            $request->request->set('name',$requestData['name']);
+            $request->request->set('description',$requestData['description']);
+            $request->request->set('status',$requestData['status']);
+            $request->request->set('category_id',$requestData['category_id']);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($product);
-        $entityManager->flush();
+            $form= $this->createForm(ProductType::class,new ProductInput());
+            $form->handleRequest($request);
 
-        return new JsonResponse(['id' => $product->getId(), 'name' => $product->getName(), 'description' => $product->getDescription(),
-            'status' => $product->getStatus(), 'created_at' => $product->getCreatedAt(), 'updated_at' => $product->getUpdatedAt(), 'deleted_at' => $product->getDeletedAt()]);
+            if ($form->isSubmitted() && $form->isValid()){
+                /** @var ProductInput $data */
+                $data = $form->getData();
+
+                $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
+                /** @var Category $category */
+                $category=$categoryRepository->find($data->getCategoryId());
+
+                $product->setName($data->getName());
+                $product->setDescription($data->getDescription());
+                $product->setStatus($data->getStatus());
+                $product->setCategory($category);
+                $product->setUpdatedAt( new \DateTime());
+
+                $entityManager=$this->getDoctrine()->getManager();
+                $entityManager->persist($product);
+                $entityManager->flush();
+
+                return new JsonResponse(['id' => $product->getId(), 'name' => $product->getName(), 'description' => $product->getDescription(),
+                    'status' => $product->getStatus(), 'category_id' => $product->getCategory()->getId(), 'created_at' => $product->getCreatedAt(), 'updated_at' => $product->getUpdatedAt(), 'deleted_at' => $product->getDeletedAt()]);
+
+            }
+
+        }
+        catch (\Exception $exception){
+            return new JsonResponse([$exception->getMessage()],400);
+        }
     }
 
     /**
@@ -121,6 +167,6 @@ class ProductController extends AbstractController
         $entityManager->persist($product);
         $entityManager->flush();
 
-        return new JsonResponse([],204);
+        return new JsonResponse([], 204);
     }
 }

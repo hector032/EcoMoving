@@ -192,7 +192,7 @@ class User
 
     public function getUpdatedAt(): ?String
     {
-        return $this->created_at ? $this->created_at->format("Y-m-d H:i") : NULL;
+        return $this->updated_at ? $this->updated_at->format("Y-m-d H:i") : NULL;
     }
 
     public function setUpdatedAt(\DateTime $updated_at): User
@@ -204,7 +204,7 @@ class User
 
     public function getDeletedAt(): ?String
     {
-        return $this->created_at ? $this->created_at->format("Y-m-d H:i") : NULL;
+        return $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i") : NULL;
     }
 
     public function setDeletedAt(\DateTime $deleted_at): User

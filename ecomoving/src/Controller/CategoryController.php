@@ -31,7 +31,7 @@ class CategoryController extends AbstractController
         $categories = $categoryRepository->findAll();
 
         $results = $paginator->paginate($categories, $request->get('page'), $request->get('limit'));
-        $items= [];
+        $items = [];
 
         /** @var Category $category */
         foreach ($results->getItems() as $category) {
@@ -42,21 +42,20 @@ class CategoryController extends AbstractController
             ];
         }
 
-        $output =  [
-             'items' => $items,
-             'total' => $results->getTotalItemCount()
+        $output = [
+            'items' => $items,
+            'total' => $results->getTotalItemCount()
         ];
-        
+
         return new JsonResponse($output);
     }
 
     /**
-     * @Route("/create", name="category_create", methods={"GET","POST"})
+     * @Route("/create", name="category_create", methods={"POST"})
      */
     public function create(Request $request): Response
     {
         try {
-
             $requestData = \json_decode($request->getContent(), true);
 
             $request->request->set('name', $requestData['name']);
@@ -87,7 +86,7 @@ class CategoryController extends AbstractController
             } else {
                 return new JsonResponse(['Error, valores no permitidos'], 400);
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             return new JsonResponse([$exception->getMessage()], 400);
         }
 
@@ -107,30 +106,40 @@ class CategoryController extends AbstractController
      */
     public function edit(Request $request, Category $category): Response
     {
-        /*$form = $this->createForm(CategoryType::class, $category);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+        try {
 
-            return $this->redirectToRoute('category_index', [], Response::HTTP_SEE_OTHER);
-        }*/
+            $requestData = \json_decode($request->getContent(), true);
 
-        $data = json_decode($request->getContent(), true);
+            $request->request->set('name', $requestData['name']);
+            $request->request->set('description', $requestData['description']);
+            $request->request->set('status', $requestData['status']);
 
-        $category->setName($data['name']);
-        $category->setDescription($data['description']);
-        $category->setStatus($data['status']);
-        $category->setUpdatedAt(new \DateTime());
+            $form = $this->createForm(CategoryType::class, new CategoryInput());
+            $form->handleRequest($request);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($category);
-        $entityManager->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                /** @var CategoryInput $data */
+                $data = $form->getData();
 
-        return new JsonResponse(['id' => $category->getId(), 'name' => $category->getName(), 'description' => $category->getDescription(),
-            'status' => $category->getStatus(), 'created_at' => $category->getCreatedAt(), 'updated_at' => $category->getUpdatedAt(), 'deleted_at' => $category->getDeletedAt()]);
+                $category->setName($data->getName());
+                $category->setDescription($data->getDescription());
+                $category->setStatus($data->getStatus());
+                $category->setUpdatedAt(new \DateTime());
 
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($category);
+                $entityManager->flush();
 
+                return new JsonResponse(['id' => $category->getId(), 'name' => $category->getName(), 'description' => $category->getDescription(),
+                    'status' => $category->getStatus(), 'created_at' => $category->getCreatedAt(), 'updated_at' => $category->getUpdatedAt(), 'deleted_at' => $category->getDeletedAt()]);
+
+            } else {
+                return new JsonResponse(['Error, valores no permitidos'], 400);
+            }
+        } catch (\Exception $exception) {
+            return new JsonResponse([$exception->getMessage()], 400);
+        }
     }
 
     /**
@@ -149,6 +158,6 @@ class CategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return new JsonResponse([],204);
+        return new JsonResponse([], 204);
     }
 }

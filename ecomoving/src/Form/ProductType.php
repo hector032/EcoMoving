@@ -2,10 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Product;
-use Symfony\Component\Form\AbstractType;
+
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+
 
 class ProductType extends BaseAbstractType
 {
@@ -15,16 +14,8 @@ class ProductType extends BaseAbstractType
             ->add('name')
             ->add('description')
             ->add('status')
-            ->add('created_at')
-            ->add('updated_at')
-            ->add('deleted_at')
+            ->add('category_id')
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => Product::class,
-        ]);
+        $builder->setMethod('POST');
     }
 }

@@ -1,17 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Input;
 
-use App\Repository\ProductRepository;
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * @ORM\Entity(repositoryClass=ProductRepository::class)
- */
 class ProductInput
 {
-
-
     /**
      * @var string
      */
@@ -28,29 +20,10 @@ class ProductInput
     private $status;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @var integer
      */
-    private $created_at;
+    private $categoryId;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updated_at;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $deleted_at;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="product")
-     */
-    private $category;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     public function getName(): string
     {
@@ -88,56 +61,14 @@ class ProductInput
         return $this;
     }
 
-    public function getCreatedAt(): ?String
+    public function getCategoryId(): int
     {
-        return $this->created_at ? $this->created_at->format("Y-m-d H:i") : NULL;
+        return $this->categoryId;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): self
+    public function setCategoryId(int $categoryId): self
     {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?String
-    {
-        return $this->updated_at ? $this->updated_at ->format("Y-m-d H:i") :NULL;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updated_at): self
-    {
-        $this->updated_at = $updated_at;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDeletedAt(): ?String
-    {
-        return $this->deleted_at ? $this->deleted_at ->format("Y-m-d H:i") :NULL;
-    }
-
-    /**
-     * @param mixed $deleted_at
-     */
-    public function setDeletedAt(\DateTimeInterface $deleted_at): self
-    {
-        $this->deleted_at = $deleted_at;
-
-        return $this;
-    }
-
-    public function getCategory(): Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(Category $category): self
-    {
-        $this->category = $category;
+        $this->categoryId = $categoryId;
 
         return $this;
     }
