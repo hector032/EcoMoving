@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Exception\FormValidationException;
 
 /**
- * @Route("/product")
+ * @Route("/api/product")
  */
 class ProductController extends AbstractController
 {

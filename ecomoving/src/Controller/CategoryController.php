@@ -19,7 +19,7 @@ use App\Exception\FormValidationException;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 
 /**
- * @Route("/category")
+ * @Route("/api/category")
  */
 class CategoryController extends AbstractController
 {

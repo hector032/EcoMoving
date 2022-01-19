@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 
 /**
- * @Route("/user")
+ * @Route("/api/user")
  */
 class UserController extends AbstractController
 {

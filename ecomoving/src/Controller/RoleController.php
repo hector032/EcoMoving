@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * @Route("/role")
+ * @Route("/api/role")
  */
 class RoleController extends AbstractController
 {
