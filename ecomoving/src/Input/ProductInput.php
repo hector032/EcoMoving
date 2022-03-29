@@ -22,7 +22,10 @@ class ProductInput
     /**
      * @var integer
      */
+
     private $categoryId;
+
+
 
 
     public function getName(): string

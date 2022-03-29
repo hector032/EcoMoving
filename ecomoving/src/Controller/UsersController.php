@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Role;
-use App\Entity\User;
+use App\Entity\Users;
 
 use App\Form\UserType;
-use App\Input\UserInput;
+use App\Input\UsersInput;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/user")
  */
-class UserController extends AbstractController
+class UsersController extends AbstractController
 {
     /**
      * @Route("/list", name="user_list", methods={"GET"})
@@ -29,12 +29,17 @@ class UserController extends AbstractController
     {
         $users = $userRepository->findAll();
 
-        $results = $paginator->paginate($users, $request->get('page'), $request->get('limit'));
+        $page = $request->get('page') ? $request->get('page') : 1;
+        $limit = $request->get('limit') ? $request->get('limit') :500;
+
+        $results = $paginator->paginate($users, $page, $limit);
+
         $items = [];
 
-        /** @var User $user */
+        /** @var Users $user */
         foreach ($results->getItems() as $user) {
             $items[] = [
+                'id' => $user->getId(),
                 'firstName' => $user->getFirstName(),
                 'lastName' => $user->getLastName(),
                 'address' => $user->getAddress(),
@@ -73,16 +78,18 @@ class UserController extends AbstractController
             $request->request->set('status', $requestData['status']);
             $request->request->set('role_id', $requestData['role_id']);
 
-            $form = $this->createForm(UserType::class, new UserInput());
+            UserType::setMethod('POST');
+
+            $form = $this->createForm(UserType::class, new UsersInput());
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                /** @var UserInput $data */
+                /** @var UsersInput $data */
                 $data = $form->getData();
 
-                /** @var User $user */
-                $user = new User();
+                /** @var Users $user */
+                $user = new Users();
 
                 $roleRepository = $this->getDoctrine()->getRepository(Role ::class);
                 /** @var RoleRepository $role */
@@ -118,7 +125,7 @@ class UserController extends AbstractController
     /**
      * @Route("/{id}", name="user_show", methods={"GET"})
      */
-    public function show(User $user): JsonResponse
+    public function show(Users $user): JsonResponse
     {
 
         return new JsonResponse(['id' => $user->getId(), 'first_name' => $user->getFirstName(), 'last_name' => $user->getLastName(),
@@ -127,9 +134,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="user_edit", methods={"GET","POST"})
+     * @Route("/edit/{id}", name="user_edit", methods={"GET","POST", "PUT"})
      */
-    public function edit(Request $request, User $user): Response
+    public function edit(Request $request, Users $user): Response
     {
         try{
             $requestData = \json_decode($request->getContent(),true);
@@ -144,11 +151,13 @@ class UserController extends AbstractController
             $request->request->set('status', $requestData['status']);
             $request->request->set('role_id', $requestData['role_id']);
 
-            $form= $this->createForm(UserType::class,new UserInput());
+            UserType::setMethod('PUT');
+
+            $form= $this->createForm(UserType::class,new UsersInput());
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()){
-                /** @var UserInput $data */
+                /** @var UsersInput $data */
                 $data = $form->getData();
 
                 $roleRepository = $this->getDoctrine()->getRepository(Role::class);
@@ -186,9 +195,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/delete", name="user_delete", methods={"POST"})
+     * @Route("/delete/{id}", name="user_delete", methods={"POST","DELETE"})
      */
-    public function delete(User $user): JsonResponse
+    public function delete(Users $user): JsonResponse
     {
         if (!$user->getId()) {
             return new JsonResponse([], 400);

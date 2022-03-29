@@ -16,28 +16,37 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Exception\FormValidationException;
 
+
 /**
  * @Route("/api/product")
  */
 class ProductController extends AbstractController
 {
+
     /**
      * @Route("/list", name="product_list", methods={"GET"})
      */
     public function list(ProductRepository $productRepository, PaginatorInterface $paginator, Request $request): Response
     {
+
         //TODO: its need apply limti in this query
         $products = $productRepository->findAll();
 
-        $results = $paginator->paginate($products, $request->get('page'), $request->get('limit'));
+        $page = $request->get('page') ? $request->get('page') : 1;
+        $limit = $request->get('limit') ? $request->get('limit') :500;
+
+        $results = $paginator->paginate($products, $page, $limit);
+
         $items = [];
 
         /** @var Product $product */
         foreach ($results->getItems() as $product) {
             $items[] = [
+                'id' => $product->getId(),
                 'name' => $product->getName(),
                 'description' => $product->getDescription(),
-                'status' => $product->getStatus()
+                'status' => $product->getStatus(),
+                'category_id' => $product->getCategory()->getId()
             ];
         }
 
@@ -61,6 +70,8 @@ class ProductController extends AbstractController
             $request->request->set('name', $requestData['name']);
             $request->request->set('description', $requestData['description']);
             $request->request->set('status', $requestData['status']);
+
+            ProductType::setMethod('POST');
 
             $form = $this->createForm(ProductType::class, new ProductInput());
             $form->handleRequest($request);
@@ -103,14 +114,15 @@ class ProductController extends AbstractController
     public function show(Product $product): Response
     {
         return new JsonResponse(['id' => $product->getId(), 'name' => $product->getName(), 'description' => $product->getDescription(),
-            'status' => $product->getStatus(), 'created_at' => $product->getCreatedAt(), 'updated_at' => $product->getUpdatedAt(), 'deleted_at' => $product->getDeletedAt()]);
+            'status' => $product->getStatus(),'category_id' => $product->getCategory()->getId(), 'created_at' => $product->getCreatedAt(), 'updated_at' => $product->getUpdatedAt(), 'deleted_at' => $product->getDeletedAt()]);
     }
 
     /**
-     * @Route("/{id}/edit", name="product_edit", methods={"GET","POST"})
+     * @Route("/edit/{id}", name="product_edit", methods={"PUT"})
      */
     public function edit(Request $request, Product $product): Response
     {
+
         try{
             $requestData = \json_decode($request->getContent(),true);
 
@@ -118,6 +130,8 @@ class ProductController extends AbstractController
             $request->request->set('description',$requestData['description']);
             $request->request->set('status',$requestData['status']);
             $request->request->set('category_id',$requestData['category_id']);
+
+            ProductType::setMethod('PUT');
 
             $form= $this->createForm(ProductType::class,new ProductInput());
             $form->handleRequest($request);
@@ -152,7 +166,7 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/delete", name="product_delete", methods={"POST"})
+     * @Route("/delete/{id}", name="product_delete", methods={"POST", "DELETE"})
      */
     public function delete(Product $product): JsonResponse
     {

@@ -3,14 +3,14 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\User;
+use App\Entity\Users;
 
 class UserTest extends \PHPUnit\Framework\TestCase
 {
     public function testUserEntity(){
 
-        /** @var User $user */
-        $user = new User();
+        /** @var Users $user */
+        $user = new Users();
 
         $user->setFirstName('hector');
         $this->assertEquals('hector',$user->getFirstName());

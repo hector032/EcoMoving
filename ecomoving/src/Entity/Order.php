@@ -19,108 +19,127 @@ class Order
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Packs", inversedBy="order")
      */
-    private $packs_id;
+    private $packs;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="Users", inversedBy="order")
      */
-    private $user_id;
+    private $user;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="order")
      */
-    private $product_id;
+    private $product;
 
     /**
-     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $created_at;
 
     /**
-     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $updated_at;
 
     /**
-     * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $deleted_at;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $status;
+
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPacksId(): ?int
+    public function getPacks(): Packs
     {
-        return $this->packs_id;
+        return $this->packs;
     }
 
-    public function setPacksId(int $packs_id): self
+    public function setPacks(Packs $packs): self
     {
-        $this->packs_id = $packs_id;
+        $this->packs = $packs;
 
         return $this;
     }
 
-    public function getUserId(): ?int
+    public function getUser(): Users
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(int $user_id): self
+    public function setUser(Users $user): self
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getProductId(): ?int
+    public function getProduct(): Product
     {
-        return $this->product_id;
+        return $this->product;
     }
 
-    public function setProductId(int $product_id): self
+    public function setProduct(Product $product): self
     {
-        $this->product_id = $product_id;
+        $this->product = $product;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?String
     {
-        return $this->created_at;
+        return $this->created_at ? $this->created_at->format("Y-m-d H:i") : NULL;
     }
 
-    public function setCreatedAt(?\DateTimeImmutable $created_at): self
+    public function setCreatedAt(\DateTime $created_at): Order
     {
         $this->created_at = $created_at;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?String
     {
-        return $this->updated_at;
+        return $this->updated_at ? $this->updated_at->format("Y-m-d H:i") : NULL;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
+    public function setUpdatedAt(\DateTime $updated_at): Order
     {
         $this->updated_at = $updated_at;
 
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeImmutable
+    public function getDeletedAt(): ?String
     {
-        return $this->deleted_at;
+        return $this->deleted_at ? $this->deleted_at->format("Y-m-d H:i") : NULL;
     }
 
-    public function setDeletedAt(?\DateTimeImmutable $deleted_at): self
+    public function setDeletedAt(\DateTime $deleted_at): Order
     {
         $this->deleted_at = $deleted_at;
+
+        return $this;
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

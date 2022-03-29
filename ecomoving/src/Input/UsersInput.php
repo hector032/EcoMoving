@@ -2,7 +2,7 @@
 
 namespace App\Input;
 
-class UserInput
+class UsersInput
 {
     /**
      * @var string

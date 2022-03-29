@@ -30,7 +30,7 @@ class Role
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="role")
+     * @ORM\OneToMany(targetEntity="Users", mappedBy="role")
      */
     private $users;
 
@@ -40,7 +40,7 @@ class Role
     }
 
     /**
-     * @return Collection|User[]
+     * @return Collection|Users[]
      */
     public function getUsers(): Collection
     {

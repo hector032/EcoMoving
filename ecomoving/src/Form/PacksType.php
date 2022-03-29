@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Form;
 
+namespace App\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
+class PacksType extends BaseAbstractType
 
-class ProductType extends BaseAbstractType
 {
     public static $method;
 
@@ -14,15 +14,16 @@ class ProductType extends BaseAbstractType
     {
         self::$method = $method;
     }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name')
             ->add('description')
+            ->add('duration')
+            ->add('price')
             ->add('status')
-            ->add('category_id');
-
+        ;
         $builder->setMethod(self::$method);
     }
+
 }

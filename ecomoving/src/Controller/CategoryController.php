@@ -30,15 +30,19 @@ class CategoryController extends AbstractController
     {
         $categories = $categoryRepository->findAll();
 
-        $results = $paginator->paginate($categories, $request->get('page'), $request->get('limit'));
+        $page = $request->get('page') ? $request->get('page') : 1;
+        $limit = $request->get('limit') ? $request->get('limit') :500;
+
+        $results = $paginator->paginate($categories, $page, $limit);
         $items = [];
 
         /** @var Category $category */
         foreach ($results->getItems() as $category) {
             $items[] = [
+                'id' => $category->getId(),
                 'name' => $category->getName(),
                 'description' => $category->getDescription(),
-                'status' => $category->getStatus(),
+                'status' => $category->getStatus()
             ];
         }
 
@@ -61,6 +65,8 @@ class CategoryController extends AbstractController
             $request->request->set('name', $requestData['name']);
             $request->request->set('description', $requestData['description']);
             $request->request->set('status', $requestData['status']);
+
+            CategoryType::setMethod('POST');
 
             $form = $this->createForm(CategoryType::class, new CategoryInput());
             $form->handleRequest($request);
@@ -102,7 +108,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="category_edit", methods={"GET","POST"})
+     * @Route("/edit/{id}", name="category_edit", methods={"PUT"})
      */
     public function edit(Request $request, Category $category): Response
     {
@@ -114,6 +120,8 @@ class CategoryController extends AbstractController
             $request->request->set('name', $requestData['name']);
             $request->request->set('description', $requestData['description']);
             $request->request->set('status', $requestData['status']);
+
+            CategoryType::setMethod('PUT');
 
             $form = $this->createForm(CategoryType::class, new CategoryInput());
             $form->handleRequest($request);
@@ -143,7 +151,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/delete", name="category_delete", methods={"POST"})
+     * @Route("/delete/{id}", name="category_delete", methods={"POST", "DELETE"})
      */
     public function delete(Category $category): JsonResponse
     {
