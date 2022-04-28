@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Role;
-use App\Entity\Users;
+use App\Entity\User;
 
 use App\Form\UserType;
-use App\Input\UsersInput;
+use App\Input\UserInput;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/api/user")
  */
-class UsersController extends AbstractController
+class UserController extends AbstractController
 {
     /**
      * @Route("/list", name="user_list", methods={"GET"})
@@ -36,7 +36,7 @@ class UsersController extends AbstractController
 
         $items = [];
 
-        /** @var Users $user */
+        /** @var User $user */
         foreach ($results->getItems() as $user) {
             $items[] = [
                 'id' => $user->getId(),
@@ -80,16 +80,16 @@ class UsersController extends AbstractController
 
             UserType::setMethod('POST');
 
-            $form = $this->createForm(UserType::class, new UsersInput());
+            $form = $this->createForm(UserType::class, new UserInput());
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                /** @var UsersInput $data */
+                /** @var UserInput $data */
                 $data = $form->getData();
 
-                /** @var Users $user */
-                $user = new Users();
+                /** @var User $user */
+                $user = new User();
 
                 $roleRepository = $this->getDoctrine()->getRepository(Role ::class);
                 /** @var RoleRepository $role */
@@ -125,7 +125,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/{id}", name="user_show", methods={"GET"})
      */
-    public function show(Users $user): JsonResponse
+    public function show(User $user): JsonResponse
     {
 
         return new JsonResponse(['id' => $user->getId(), 'first_name' => $user->getFirstName(), 'last_name' => $user->getLastName(),
@@ -134,9 +134,9 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="user_edit", methods={"GET","POST", "PUT"})
+     * @Route("/edit/{id}", name="user_edit", methods={"PUT"})
      */
-    public function edit(Request $request, Users $user): Response
+    public function edit(Request $request, User $user): Response
     {
         try{
             $requestData = \json_decode($request->getContent(),true);
@@ -153,11 +153,11 @@ class UsersController extends AbstractController
 
             UserType::setMethod('PUT');
 
-            $form= $this->createForm(UserType::class,new UsersInput());
+            $form= $this->createForm(UserType::class,new UserInput());
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()){
-                /** @var UsersInput $data */
+                /** @var UserInput $data */
                 $data = $form->getData();
 
                 $roleRepository = $this->getDoctrine()->getRepository(Role::class);
@@ -197,7 +197,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/delete/{id}", name="user_delete", methods={"POST","DELETE"})
      */
-    public function delete(Users $user): JsonResponse
+    public function delete(User $user): JsonResponse
     {
         if (!$user->getId()) {
             return new JsonResponse([], 400);

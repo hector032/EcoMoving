@@ -30,21 +30,21 @@ class Role
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity="Users", mappedBy="role")
+     * @ORM\OneToMany(targetEntity="User", mappedBy="role")
      */
-    private $users;
+    private $user;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->user = new ArrayCollection();
     }
 
     /**
-     * @return Collection|Users[]
+     * @return Collection|User[]
      */
-    public function getUsers(): Collection
+    public function getUser(): Collection
     {
-        return $this->users;
+        return $this->user;
     }
 
     public function getId(): ?int

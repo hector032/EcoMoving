@@ -24,7 +24,7 @@ class Order
     private $packs;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Users", inversedBy="order")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="order")
      */
     private $user;
 
@@ -53,8 +53,6 @@ class Order
      */
     private $status;
 
-
-
     public function getId(): ?int
     {
         return $this->id;
@@ -72,12 +70,12 @@ class Order
         return $this;
     }
 
-    public function getUser(): Users
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(Users $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 

@@ -4,7 +4,7 @@
 namespace App\Tests\Controller;
 
 
-use App\Controller\UsersController;
+use App\Controller\UserController;
 use App\Entity\Users;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +24,7 @@ class UserControllerTest extends WebTestCase
         $userEntity->setPhone(619674484);
         $userEntity->setStatus(1);
 
-        $controller = $this->createMock(UsersController::class);
+        $controller = $this->createMock(UserController::class);
         $controller->method('show')
             ->with($userEntity)
             ->willReturn(new JsonResponse([

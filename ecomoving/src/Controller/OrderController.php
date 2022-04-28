@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\Packs;
 use App\Entity\Product;
-use App\Entity\Users;
+use App\Entity\User;
 use App\Form\OrderType;
 use App\Input\OrderInput;
 use App\Repository\OrderRepository;
@@ -28,10 +28,11 @@ class OrderController extends AbstractController
 {
 
     /**
-     * @Route("/list", name="order_list", methods={"GET"})
+     * @Route("/list", name="order_lista", methods={"GET"})
      */
     public function list(OrderRepository $orderRepository, PaginatorInterface $paginator, Request $request): Response
     {
+
 
         //TODO: its need apply limti in this query
         $orders = $orderRepository->findAll();
@@ -88,9 +89,11 @@ class OrderController extends AbstractController
                 /** @var Order $order */
                 $order = new Order();
 
-                $userRepository = $this->getDoctrine()->getRepository(Users::class);
+                $userRepository = $this->getDoctrine()->getRepository(User::class);
+
                 /** @var UserRepository $user */
                 $user = $userRepository->find($requestData['user_id']);
+
 
                 $packsRepository = $this->getDoctrine()->getRepository(Packs::class);
                 /** @var PacksRepository $packs */
@@ -133,7 +136,7 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="order_edit", methods={"GET","POST","PUT"})
+     * @Route("/edit/{id}", name="order_edit", methods={"PUT"})
      */
     public function edit(Request $request, Order $order): Response
     {
@@ -154,7 +157,7 @@ class OrderController extends AbstractController
                 /** @var OrderInput $data */
                 $data = $form->getData();
 
-                $userRepository = $this->getDoctrine()->getRepository(Users::class);
+                $userRepository = $this->getDoctrine()->getRepository(User::class);
                 /** @var UserRepository $user */
                 $user = $userRepository->find($requestData['user_id']);
 
