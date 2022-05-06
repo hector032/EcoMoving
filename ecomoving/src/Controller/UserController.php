@@ -40,6 +40,8 @@ class UserController extends AbstractController
         foreach ($results->getItems() as $user) {
             $items[] = [
                 'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'password' => $user->getPassword(),
                 'firstName' => $user->getFirstName(),
                 'lastName' => $user->getLastName(),
                 'address' => $user->getAddress(),
@@ -69,6 +71,8 @@ class UserController extends AbstractController
             $requestData = \json_decode($request->getContent(), true);
 
             $request->request->set('firstName', $requestData['firstName']);
+            $request->request->set('email', $requestData['email']);
+            $request->request->set('password', $requestData['password']);
             $request->request->set('lastName', $requestData['lastName']);
             $request->request->set('address', $requestData['address']);
             $request->request->set('country', $requestData['country']);
@@ -77,6 +81,7 @@ class UserController extends AbstractController
             $request->request->set('phone', $requestData['phone']);
             $request->request->set('status', $requestData['status']);
             $request->request->set('role_id', $requestData['role_id']);
+
 
             UserType::setMethod('POST');
 
@@ -91,11 +96,16 @@ class UserController extends AbstractController
                 /** @var User $user */
                 $user = new User();
 
+
                 $roleRepository = $this->getDoctrine()->getRepository(Role ::class);
                 /** @var RoleRepository $role */
                 $role = $roleRepository->find($data->getRoleId());
 
+
                 $user->setFirstName($data->getFirstName());
+
+                $user->setEmail($data->getEmail());
+                $user->setPassword($data->getPassword());
                 $user->setLastName($data->getLastName());
                 $user->setAddress($data->getAddress());
                 $user->setCountry($data->getCountry());
@@ -105,6 +115,7 @@ class UserController extends AbstractController
                 $user->setStatus($data->getStatus());
                 $user->setRole($role);
                 $user->setCreatedAt(new \DateTime());
+
 
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
@@ -134,13 +145,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="user_edit", methods={"PUT"})
+     * @Route("/editar/{id}", name="user_editar", methods={"PUT"})
      */
     public function edit(Request $request, User $user): Response
     {
         try{
             $requestData = \json_decode($request->getContent(),true);
 
+            $request->request->set('email', $requestData['email']);
+            $request->request->set('password', $requestData['password']);
             $request->request->set('firstName', $requestData['firstName']);
             $request->request->set('lastName', $requestData['lastName']);
             $request->request->set('address', $requestData['address']);
@@ -164,6 +177,8 @@ class UserController extends AbstractController
                 /** @var Role $role */
                 $role=$roleRepository->find($data->getRoleId());
 
+                $user->setEmail($data->getEmail());
+                $user->setPassword($data->getPassword());
                 $user->setFirstName($data->getFirstName());
                 $user->setLastName($data->getLastName());
                 $user->setAddress($data->getAddress());

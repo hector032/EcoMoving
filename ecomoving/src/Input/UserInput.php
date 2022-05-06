@@ -12,6 +12,16 @@ class UserInput
     /**
      * @var string
      */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $password;
+
+    /**
+     * @var string
+     */
     private $lastName;
 
     /**
@@ -103,6 +113,30 @@ class UserInput
     }
 
     public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setEmail(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setPassword(string $city): self
     {
         $this->city = $city;
 

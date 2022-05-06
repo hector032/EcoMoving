@@ -21,6 +21,8 @@ class UserType extends BaseAbstractType
     {
         $builder
             ->add('firstName',TextType::class, ['required'=>true,'constraints'=>[new NotNull(),new NotBlank()]])
+            ->add('email',TextType::class, ['required'=>true,'constraints'=>[new NotNull(),new NotBlank()]])
+            ->add('password',TextType::class, ['required'=>true,'constraints'=>[new NotNull(),new NotBlank()]])
             ->add('lastName',TextType::class, ['required'=>true,'constraints'=>[new NotNull(),new NotBlank()]])
             ->add('address',TextType::class, ['required'=>true,'constraints'=>[new NotNull(),new NotBlank()]])
             ->add('country',TextType::class, ['required'=>true,'constraints'=>[new NotNull(),new NotBlank()]])

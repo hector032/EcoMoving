@@ -36,9 +36,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Role", inversedBy="user")
+     */
+    private $role;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $firstName;
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -73,6 +79,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="boolean")
      */
     private $status;
+
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(Role $role): Self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
 
     /**
      * @ORM\Column(type="datetime")
